@@ -169,6 +169,12 @@
 				console.log("Joined", result);
 				this.currentRoomToken = token;
 				this._trigger('joinRoom', [token]);
+				if (this.currentCallToken === token) {
+					// We were in this call before, join again.
+					this.joinCall(token);
+				} else {
+					this.currentCallToken = null;
+				}
 				this._joinRoomSuccess(token, result.ocs.data.sessionId);
 			}.bind(this),
 			error: function (result) {
@@ -243,6 +249,13 @@
 				this.currentCallToken = token;
 				this._trigger('joinCall', [token]);
 				this._joinCallSuccess(token);
+				if (callback) {
+					// We send an empty call description to simplewebrtc since
+					// usersChanged (webrtc.js) will create/remove peer connections
+					// with call participants
+					var callDescription = {'clients': {}};
+					callback('', callDescription);
+				}
 			}.bind(this),
 			error: function () {
 				// Room not found or maintenance mode
@@ -255,7 +268,7 @@
 		// Override in subclasses if necessary.
 	};
 
-	OCA.Talk.Signaling.Base.prototype.leaveCall = function(token) {
+	OCA.Talk.Signaling.Base.prototype.leaveCall = function(token, keepToken) {
 
 		if (!token) {
 			return;
@@ -269,7 +282,7 @@
 				this._trigger('leaveCall', [token]);
 				this._leaveCallSuccess(token);
 				// We left the current call.
-				if (token === this.currentCallToken) {
+				if (!keepToken && token === this.currentCallToken) {
 					this.currentCallToken = null;
 				}
 			}.bind(this)
@@ -680,6 +693,10 @@
 
 		this._forceReconnect = false;
 		if (newSession) {
+			if (this.currentCallToken) {
+				// Mark this session as "no longer in the call".
+				this.leaveCall(this.currentCallToken, true);
+			}
 			this.sendBye();
 		}
 		if (this.socket) {
