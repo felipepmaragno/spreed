@@ -275,6 +275,7 @@ class SignalingController extends OCSController {
 	 * https://github.com/nextcloud/spreed/wiki/Spreed-Signaling-API
 	 *
 	 * @PublicPage
+	 * @NoCSRFRequired
 	 *
 	 * @return DataResponse
 	 */
