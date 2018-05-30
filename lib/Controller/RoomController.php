@@ -194,7 +194,7 @@ class RoomController extends OCSController {
 				'numGuests' => 0,
 				'hasCall' => false,
 				'guestList' => '',
-                'lastMessage' => [],
+				'lastMessage' => [],
 			]);
 
 			return $roomData;
