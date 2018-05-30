@@ -26,6 +26,7 @@
 namespace OCA\Spreed\Controller;
 
 use OCA\Spreed\Chat\ChatManager;
+use OCA\Spreed\Chat\RichMessageHelper;
 use OCA\Spreed\Exceptions\InvalidPasswordException;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
