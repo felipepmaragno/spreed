@@ -194,6 +194,7 @@ class RoomController extends OCSController {
 				'numGuests' => 0,
 				'hasCall' => false,
 				'guestList' => '',
+                'lastMessage' => [],
 			]);
 
 			return $roomData;
@@ -250,8 +251,7 @@ class RoomController extends OCSController {
 				$user = $this->userManager->get($actorId);
 				$displayName = $user instanceof IUser ? $user->getDisplayName() : '';
 			} else if ($actorType === 'guests') {
-				$guestSession = $actorId;
-				$guestNames = !empty($guestSession) ? $this->guestManager->getNamesBySessionHashes([$guestSession]) : [];
+				$guestNames = !empty($actorId) ? $this->guestManager->getNamesBySessionHashes([$actorId]) : [];
 				$displayName = isset($guestNames[$actorId]) ? $guestNames[$actorId] : '';
 			}
 
