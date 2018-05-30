@@ -235,7 +235,7 @@ class RoomController extends OCSController {
 		}
 
 		$lastMessageFromHistory = $this->chatManager->getHistory($room->getId(), 0, 1);
-		$lastMessage = '';
+		$lastMessage = [];
 
 		if (!empty($lastMessageFromHistory)) {
 
@@ -243,19 +243,22 @@ class RoomController extends OCSController {
 
 			$displayName = '';
 
-			if ($lastMessageFromHistory[0]->getActorType() === 'users') {
-				$user = $this->userManager->get($lastMessageFromHistory[0]->getActorId());
+            $actorId = $lastMessageFromHistory[0]->getActorId();
+            $actorType = $lastMessageFromHistory[0]->getActorType();
+
+			if ($actorType === 'users') {
+				$user = $this->userManager->get($actorId);
 				$displayName = $user instanceof IUser ? $user->getDisplayName() : '';
-			} else if ($lastMessageFromHistory[0]->getActorType() === 'guests') {
-				$guestSessions[] = $lastMessageFromHistory[0]->getActorId();
-				$guestNames = !empty($guestSessions) ? $this->guestManager->getNamesBySessionHashes($guestSessions) : [];
-				$displayName =  isset($guestNames[$lastMessageFromHistory[0]->getActorId()]) ? $guestNames[$lastMessageFromHistory[0]->getActorId()] : '';
+			} else if ($actorType === 'guests') {
+                $guestSession = $actorId;
+                $guestNames = !empty($guestSession) ? $this->guestManager->getNamesBySessionHashes([$guestSession]) : [];
+                $displayName =  isset($guestNames[$actorId]) ? $guestNames[$actorId] : '';
 			}
 
 			$lastMessage = [
 				'id' => $lastMessageFromHistory[0]->getId(),
-				'actorType' => $lastMessageFromHistory[0]->getActorType(),
-				'actorId' => $lastMessageFromHistory[0]->getActorId(),
+				'actorType' => $actorType,
+				'actorId' => $actorId,
 				'actorDisplayName' => $displayName,
 				'timestamp' => $lastMessageFromHistory[0]->getCreationDateTime()->getTimestamp(),
 				'message' => $message,
