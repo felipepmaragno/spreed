@@ -243,16 +243,16 @@ class RoomController extends OCSController {
 
 			$displayName = '';
 
-            $actorId = $lastMessageFromHistory[0]->getActorId();
-            $actorType = $lastMessageFromHistory[0]->getActorType();
+			$actorId = $lastMessageFromHistory[0]->getActorId();
+			$actorType = $lastMessageFromHistory[0]->getActorType();
 
 			if ($actorType === 'users') {
 				$user = $this->userManager->get($actorId);
 				$displayName = $user instanceof IUser ? $user->getDisplayName() : '';
 			} else if ($actorType === 'guests') {
-                $guestSession = $actorId;
-                $guestNames = !empty($guestSession) ? $this->guestManager->getNamesBySessionHashes([$guestSession]) : [];
-                $displayName =  isset($guestNames[$actorId]) ? $guestNames[$actorId] : '';
+				$guestSession = $actorId;
+				$guestNames = !empty($guestSession) ? $this->guestManager->getNamesBySessionHashes([$guestSession]) : [];
+				$displayName = isset($guestNames[$actorId]) ? $guestNames[$actorId] : '';
 			}
 
 			$lastMessage = [
